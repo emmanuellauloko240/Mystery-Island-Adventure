@@ -18,5 +18,6 @@ while loop:
     if command == "q" or command == "quit":
         print("Thanks for playing! Goodbye.")
         loop = False 
+    elif command in ['north', 'south', 'east', 'west']
     # else:
     #     print("Invalid choice, try again.")
