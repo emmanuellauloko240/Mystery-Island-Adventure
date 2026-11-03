@@ -3,21 +3,20 @@ from game import move_player, new_game, get_room_description
 
 def new_game():
 
-    command = input("What do you want to do? ").strip().lower()
 
 nickname = input("Enter your name: ")
+player = new_game(nickname)
 
-print(f"Welcome, {nickname}! ")
+print(f"Welcome, {player['name']}! ")
+print(get_room_description(player['location']))
 
 loop = True
 
 while loop:
-    menu_choice = input("1. Look around | q. Quit: ").strip().lower()
-    
-    if menu_choice == "1":
-        print("You look around the beach. The waves crash softly.")
-    elif menu_choice == "q":
+    command = input("\What do you want to do? ").strip().lower()
+   
+    if command == "q" or command == "quit":
         print("Thanks for playing! Goodbye.")
         loop = False 
-    else:
-        print("Invalid choice, try again.")
+    # else:
+    #     print("Invalid choice, try again.")
