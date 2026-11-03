@@ -1,4 +1,9 @@
-from game import new_game, get_room_description
+from game import move_player, new_game, get_room_description
+
+
+def new_game():
+
+    command = input("What do you want to do? ").strip().lower()
 
 nickname = input("Enter your name: ")
 
