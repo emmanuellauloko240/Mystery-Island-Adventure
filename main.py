@@ -1,23 +1,23 @@
-from game import move_player, new_game, get_room_description
+# from game import move_player, new_game, get_room_description
 
 
-def new_game():
+# def new_game():
 
 
-nickname = input("Enter your name: ")
-player = new_game(nickname)
+# nickname = input("Enter your name: ")
+# player = new_game(nickname)
 
-print(f"Welcome, {player['name']}! ")
-print(get_room_description(player['location']))
+# print(f"Welcome, {player['name']}! ")
+# print(get_room_description(player['location']))
 
-loop = True
+# loop = True
 
-while loop:
-    command = input("\What do you want to do? ").strip().lower()
+# while loop:
+#     command = input("\What do you want to do? ").strip().lower()
    
-    if command == "q" or command == "quit":
-        print("Thanks for playing! Goodbye.")
-        loop = False 
-    elif command in ['north', 'south', 'east', 'west']
-    # else:
-    #     print("Invalid choice, try again.")
+#     if command == "q" or command == "quit":
+#         print("Thanks for playing! Goodbye.")
+#         loop = False 
+#     elif command in ['north', 'south', 'east', 'west']
+#     # else:
+#     #     print("Invalid choice, try again.")

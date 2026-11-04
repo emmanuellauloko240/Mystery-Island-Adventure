@@ -23,7 +23,7 @@
 # score = 50
 # print(f"Welcome, {nickname}! your score is {score}")
 
-# age = (input("Enter your age: "))
+# age = int(input("Enter your age: "))
 
 # total = age+5
 # # print(f"In 5 years, you will be {total} years old!")
@@ -99,8 +99,54 @@
 
 # else:
 #     print("Not eligible")
-count = 1
+# count = 1
 
-while count <= 4:
-    print(count)
-    count = count + 1
+# while count <= 5:
+
+#     print(count)
+#     count = count + 1
+
+# energy = 5
+
+# while energy > 2:
+#     print(energy)
+#     energy = energy - 1
+
+# energy = 3
+
+# while energy > 0:
+#     print("Island adventure!")
+#     energy = energy - 1
+
+# def double(number):  # number = parameter
+#     return number * 2
+
+# total = double(4)  
+
+# print(total)
+
+# def can_enter(age):
+#     return age >= 18
+
+# result = can_enter(20)
+# # print(result)
+
+# inventory = ["rope", "lantern", "map"]
+
+# inventory.append("Key")
+
+# print("torch" in inventory)
+
+# player = {
+#     "name": "Ada",
+#     "energy": 5,
+#     "location": "Beach"
+# }
+# print(player["energy"])
+
+# player = {"name": "Ada", "energy": 5}
+
+# print(player.get("score", 0))
+# choice = "NORTH"
+# choice = choice.lower()
+# print(choice)
