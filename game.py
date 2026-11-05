@@ -1,8 +1,16 @@
 inventory = ['rope','water-bottle','map']
+
+weapons = {
+    "bare hands": 5,
+    "wooden sword": 10,
+    "metal dagger": 20
+}
+
 player = {
     "Energy": 50,
     "Location": "Beach",
-    'inventory': inventory
+    'inventory': inventory,
+    'Weapon': 'wooden sword'
 }
 
 wild_beast = {
@@ -43,4 +51,5 @@ def fight_enemy(enemy, weapon_damage):
         if player['Energy'] <= 0:
             print("Game over you have been defeated")
             break
+        weapons[player['Weapon']] = weapons['wooden sword']
 fight_enemy(wild_beast, 10)
