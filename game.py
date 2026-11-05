@@ -29,18 +29,68 @@
 #     elif direction not in map[current_room]:
 #         return False
 
-    inventory = ['rope','water-bottle','map']
-    player = {
-        "Energy": 50,
-        "Location": "Beach",
-        'inventory': inventory
-    }
+inventory = ['rope','water-bottle','map']
+player = {
+    "Energy": 50,
+    "Location": "Beach",
+    'inventory': inventory
+}
 
-    player["Energy"] = player["Energy"] - 10
+wild_beast = {
+    "Name": "Wild Beast",
+    "Hp": 30,
+    "Damage": 5
+}
 
-    player["Location"] = "Cave"
+cave_monster = {
+    "Name": "Cave Monster",
+    "Hp": 50,
+    "Damage": 10
+}
 
-    print(player)
+temple_guardian = {
+    "Name": "Temple Guardian",
+    "Hp": 100,
+    "Damage": 15
+}
+
+enemies = {
+    "wild_beast": wild_beast,
+    "cave_monster": cave_monster,
+    "temple_guardian": temple_guardian
+}
+def fight_enemy(enemy):
+    while enemy['Hp'] > 0 and player['Energy'] > 0:
+        enemy['Hp'] = enemy['Hp'] - 10
+        print(f"{enemy['Name']} you've only got {enemy['Hp']} Hp left!")
+    if enemy['Hp'] <= 0:
+        print(f"You defeated the {enemy['Name']}!")
+        break
+    if enemy['Hp'] > 0:
+        print(f"{enemy['Name']} attacks the player!")
+    player['Energy'] = player['Energy'] - enemy['Damege']
+
+    print("Game Over!")
+    break
+    
+if enemies['wild_beast']['Hp'] <= 0:
+    print("Wild Beast defeated!")
+
+while enemies['wild_beast']['Hp'] > 0 and player['Energy'] > 0:
+    
+    enemies['wild_beast']['Hp'] = enemies['wild_beast']['Hp'] - 10
+
+    print(f"Wild Beast Hp: {enemies['wild_beast']['Hp']}")
+    if enemies['wild_beast']['Hp'] <= 0:
+        print("Wild Beast defeated!")
+        break
+    if enemies['wild_beast']['Hp'] > 0:
+        print('Wild Beast attacks the player!')
+        player['Energy'] = player['Energy'] - enemies['wild_beast']['Damage']
+        
+    if player['Energy'] <= 0:
+        print("Game over! You have been defeated.")
+        break
 
 
 def move_player(destination):
