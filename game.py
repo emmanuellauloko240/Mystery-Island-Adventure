@@ -68,3 +68,6 @@ def fight_enemy(enemy, weapon_damage):
             break
 player['Weapon'] = 'bare hands'
 fight_enemy(cave_monster, weapons[player['Weapon']])
+player['Energy'] = 50
+fight_enemy(cave_monster, weapons[player['Weapon']])
+print(cave_monster['Defeated'])
