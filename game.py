@@ -49,8 +49,6 @@ def fight_enemy(enemy, weapon_damage):
         return
     else:
         print("Villain is still alive")
-
-        enemy['Hp'] = enemy['Max_Hp']
         
     while enemy['Hp'] > 0 and player['Energy'] > 0:
         enemy['Hp'] = enemy['Hp'] - weapon_damage
