@@ -42,6 +42,17 @@ enemies = {
     "cave_monster": cave_monster,
     "temple_guardian": temple_guardian
 }
+
+location_enemies = {
+    "Forest": wild_beast,
+    "Cave": cave_monster,
+    "Temple": temple_guardian
+}
+enemy = location_enemies[player['Location']]
+
+if player['Location'] in location_enemies:
+    enemy = location_enemies[player['Location']]
+    fight_enemy(enemy,weapons[player['Weapon']])
 def fight_enemy(enemy, weapon_damage):
 
     if enemy['Defeated'] == True:
@@ -66,8 +77,4 @@ def fight_enemy(enemy, weapon_damage):
             
             print("Game over you have been defeated")
             break
-player['Weapon'] = 'bare hands'
-fight_enemy(cave_monster, weapons[player['Weapon']])
-player['Energy'] = 50
-fight_enemy(cave_monster, weapons[player['Weapon']])
-print(cave_monster['Defeated'])
+
