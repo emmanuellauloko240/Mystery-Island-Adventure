@@ -8,7 +8,7 @@ weapons = {
 
 player = {
     "Energy": 50,
-    "Location": "Beach",
+    "Location": "Forest",
     'inventory': inventory,
     'Weapon': 'wooden sword'
 }
@@ -48,12 +48,15 @@ location_enemies = {
     "Cave": cave_monster,
     "Temple": temple_guardian
 }
-enemy = location_enemies[player['Location']]
+# enemy = location_enemies[player['Location']]
 
-if player['Location'] in location_enemies:
-    enemy = location_enemies[player['Location']]
-    fight_enemy(enemy,weapons[player['Weapon']])
+
 def fight_enemy(enemy, weapon_damage):
+    if player['Location'] in location_enemies:
+        enemy = location_enemies[player['Location']]
+        fight_enemy(enemy,weapons[player['Weapon']])
+    else:
+        print("No enemies here you can rest and explore")
 
     if enemy['Defeated'] == True:
         print("Villain has already been defeated")
@@ -78,3 +81,4 @@ def fight_enemy(enemy, weapon_damage):
             print("Game over you have been defeated")
             break
 
+fight_enemy(enemy,weapon_damage)
