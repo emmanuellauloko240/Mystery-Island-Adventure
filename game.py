@@ -1,21 +1,6 @@
 import json
 
-with open("save_game.json", "w") as file:
-    json.dump(data, file) 
-# inventory = ['rope','water-bottle','map']
-
-weapons = {
-    "bare hands": 5,
-    "wooden sword": 10,
-    "metal dagger": 20
-}
-
-player = {
-    "Energy": 50,
-    "Location": "Forest",
-    'inventory': inventory,
-    'Weapon': 'wooden sword'
-}
+inventory = ['rope','water-bottle','map']
 
 wild_beast = {
     "Name": "Wild Beast",
@@ -41,6 +26,14 @@ temple_guardian = {
     "Defeated": False
 }
 
+player = {
+    "Energy": 50,
+    "Location": "Forest",
+    'inventory': inventory,
+    'Weapon': 'wooden sword'
+}
+
+
 enemies = {
     "wild_beast": wild_beast,
     "cave_monster": cave_monster,
@@ -50,6 +43,22 @@ enemies = {
 game_data = {
     "player": player, 
     "enemies": enemies
+}
+
+def save_game():
+    with open("save_game.json","w") as file:
+        json.dump(game_data,file)
+
+def load_game():
+    with open("same_game.json", "r") as file:
+        data = json.load(file)
+    return data
+        data = load_game()
+    data['enemies']
+weapons = {
+    "bare hands": 5,
+    "wooden sword": 10,
+    "metal dagger": 20
 }
 
 location_enemies = {
@@ -85,13 +94,10 @@ def fight_enemy(enemy, weapon_damage):
 
 if player['Location'] in location_enemies:
     enemy = location_enemies[player['Location']]
-    fight_enemy(enemy,weapons[player['Weapon']])
+    fight_enemy(enemy, weapons[player['Weapon']])
+    save_game()
 else:
     print("No enemies here you can rest and explore")
-save_game()
 
-def save_game():
-    with open("save_game.json","w") as file:
-        json.dump(game_data,file)
 
 # fight_enemy(enemy,weapon_damage)
