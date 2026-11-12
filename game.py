@@ -1,4 +1,8 @@
-inventory = ['rope','water-bottle','map']
+import json
+
+with open("save_game.json", "w") as file:
+    json.dump(data, file) 
+# inventory = ['rope','water-bottle','map']
 
 weapons = {
     "bare hands": 5,
@@ -43,6 +47,11 @@ enemies = {
     "temple_guardian": temple_guardian
 }
 
+game_data = {
+    "player": player, 
+    "enemies": enemies
+}
+
 location_enemies = {
     "Forest": wild_beast,
     "Cave": cave_monster,
@@ -50,20 +59,13 @@ location_enemies = {
 }
 # enemy = location_enemies[player['Location']]
 
-
 def fight_enemy(enemy, weapon_damage):
-    if player['Location'] in location_enemies:
-        enemy = location_enemies[player['Location']]
-        fight_enemy(enemy,weapons[player['Weapon']])
-    else:
-        print("No enemies here you can rest and explore")
-
     if enemy['Defeated'] == True:
         print("Villain has already been defeated")
         return
     else:
         print("Villain is still alive")
-        
+            
     while enemy['Hp'] > 0 and player['Energy'] > 0:
         enemy['Hp'] = enemy['Hp'] - weapon_damage
         print(f"{enemy['Name']} you've only got {enemy['Hp']} Hp left!")
@@ -81,4 +83,15 @@ def fight_enemy(enemy, weapon_damage):
             print("Game over you have been defeated")
             break
 
-fight_enemy(enemy,weapon_damage)
+if player['Location'] in location_enemies:
+    enemy = location_enemies[player['Location']]
+    fight_enemy(enemy,weapons[player['Weapon']])
+else:
+    print("No enemies here you can rest and explore")
+save_game()
+
+def save_game():
+    with open("save_game.json","w") as file:
+        json.dump(game_data,file)
+
+# fight_enemy(enemy,weapon_damage)
