@@ -50,9 +50,12 @@ def save_game():
         json.dump(game_data,file)
 
 def load_game():
-    with open("save_game.json", "r") as file:
-        data = json.load(file)
-    return data
+    try:
+        with open("save_game.json", "r") as file:
+            data = json.load(file)
+        return data
+    except FileNotFoundError:
+        print("No saved game found starting a new game...")
 data = load_game()
 player.update(data["player"])
 wild_beast.update(data["enemies"]["wild_beast"])
