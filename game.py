@@ -50,11 +50,14 @@ def save_game():
         json.dump(game_data,file)
 
 def load_game():
-    with open("same_game.json", "r") as file:
+    with open("save_game.json", "r") as file:
         data = json.load(file)
     return data
-        data = load_game()
-    data['enemies']
+data = load_game()
+player.update(data["player"])
+wild_beast.update(data["enemies"]["wild_beast"])
+cave_monster.update(data['enemies']['cave_monster'])
+temple_guardian.update(data['enemies']['temple_guardian'])
 weapons = {
     "bare hands": 5,
     "wooden sword": 10,
