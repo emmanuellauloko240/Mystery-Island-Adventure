@@ -56,6 +56,10 @@ def load_game():
         return data
     except FileNotFoundError:
         print("No saved game found starting a new game...")
+        return game_data
+choice = input("1. Continue game\n2. Start new game\nEnter your choice: ")
+if choice == '1':
+    # load_game
 data = load_game()
 player.update(data["player"])
 wild_beast.update(data["enemies"]["wild_beast"])
