@@ -137,19 +137,22 @@ print("3. Temple")
 
 destination = input("Choose your destination: ")
 
-if destination == '1':
-    player['Location'] = 'Forest'
-elif destination == '2':
-    player['Location'] = 'Cave'
-elif destination == '3':
-    player['Location'] = 'Temple'
-else:
-    print("Invalid destination!")
-
-print(player['Location'])
 if destination in ['1', '2', '3'] and player['Energy'] >= 10:
+
+    if destination == '1':
+        player['Location'] = 'Forest'
+    elif destination == '2':
+        player['Location'] = 'Cave'
+    elif destination == '3':
+        player['Location'] = 'Temple'
+
     player['Energy'] = player['Energy'] - 10
+
+else:
+    print("You cannot travel!")
     
+print(player['Location'])
+
 if player['Location'] in location_enemies:
     enemy = location_enemies[player['Location']]
     fight_enemy(enemy, weapons[player['Weapon']])
