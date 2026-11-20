@@ -59,12 +59,40 @@ def load_game():
         return game_data
 choice = input("1. Continue game\n2. Start new game\nEnter your choice: ")
 if choice == '1':
-    # load_game
-data = load_game()
-player.update(data["player"])
-wild_beast.update(data["enemies"]["wild_beast"])
-cave_monster.update(data['enemies']['cave_monster'])
-temple_guardian.update(data['enemies']['temple_guardian'])
+    data = load_game()
+    player.update(data["player"])
+    wild_beast.update(data["enemies"]["wild_beast"])
+    cave_monster.update(data['enemies']['cave_monster'])
+    temple_guardian.update(data['enemies']['temple_guardian'])
+
+
+elif choice == '2':
+    print("Starting a new game...")
+    player['Energy'] = 50
+    player['Location'] = 'Forest'
+    player['Weapon'] = 'wooden sword'
+    player['inventory'] = ['rope', 'water-bottle', 'map']
+
+
+    wild_beast.update({
+        "Hp": 30,
+        "Defeated": False
+    })
+
+    cave_monster.update({
+        "Hp": 50,
+        "Defeated": False
+    })
+
+    temple_guardian.update({
+        "Hp": 100,
+        "Defeated": False
+    })
+
+else:
+    print("Invalid choice!")
+
+
 weapons = {
     "bare hands": 5,
     "wooden sword": 10,
