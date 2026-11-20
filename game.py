@@ -58,6 +58,8 @@ def load_game():
         print("No saved game found starting a new game...")
         return game_data
 choice = input("1. Continue game\n2. Start new game\nEnter your choice: ")
+while choice not in ['1', '2']:
+    choice = input("Invalid choice! Enter 1 or 2: ")
 if choice == '1':
     data = load_game()
     player.update(data["player"])
@@ -104,7 +106,6 @@ location_enemies = {
     "Cave": cave_monster,
     "Temple": temple_guardian
 }
-# enemy = location_enemies[player['Location']]
 
 def fight_enemy(enemy, weapon_damage):
     if enemy['Defeated'] == True:
@@ -129,7 +130,26 @@ def fight_enemy(enemy, weapon_damage):
             
             print("Game over you have been defeated")
             break
+print("Where would you like to go?")
+print("1. Forest")
+print("2. Cave")
+print("3. Temple")
 
+destination = input("Choose your destination: ")
+
+if destination == '1':
+    player['Location'] = 'Forest'
+elif destination == '2':
+    player['Location'] = 'Cave'
+elif destination == '3':
+    player['Location'] = 'Temple'
+else:
+    print("Invalid destination!")
+
+print(player['Location'])
+if destination in ['1', '2', '3'] and player['Energy'] >= 10:
+    player['Energy'] = player['Energy'] - 10
+    
 if player['Location'] in location_enemies:
     enemy = location_enemies[player['Location']]
     fight_enemy(enemy, weapons[player['Weapon']])
