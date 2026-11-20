@@ -128,36 +128,43 @@ def fight_enemy(enemy, weapon_damage):
                 print(f"Careful...you only have {player['Energy']} Energy left!")
             else:            
                 print("Game over you have been defeated")
-                break
-print("Where would you like to go?")
-print("1. Forest")
-print("2. Cave")
-print("3. Temple")
+                return False
+while player['Energy'] > 0:
+    print("Where would you like to go?")
+    print("1. Forest")
+    print("2. Cave")
+    print("3. Temple")
 
-destination = input("Choose your destination: ")
+    destination = input("Choose your destination: ")
 
-if destination in ['1', '2', '3'] and player['Energy'] >= 10:
+    if destination not in ['1', '2', '3']:
+        print("Invalid destination!")
+        continue
 
-    if destination == '1':
-        player['Location'] = 'Forest'
-    elif destination == '2':
-        player['Location'] = 'Cave'
-    elif destination == '3':
-        player['Location'] = 'Temple'
+    if destination in ['1', '2', '3'] and player['Energy'] >= 10:
 
-    player['Energy'] = player['Energy'] - 10
+        if destination == '1':
+            player['Location'] = 'Forest'
+        elif destination == '2':
+            player['Location'] = 'Cave'
+        elif destination == '3':
+            player['Location'] = 'Temple'
 
-else:
-    print("You cannot travel!")
-    
-print(player['Location'])
+        player['Energy'] = player['Energy'] - 10
 
-if player['Location'] in location_enemies:
-    enemy = location_enemies[player['Location']]
-    fight_enemy(enemy, weapons[player['Weapon']])
-    save_game()
-else:
-    print("No enemies here you can rest and explore")
+    else:
+        print("Not enough Energy to travel!")
+        break
 
+    print(player['Location'])
+
+    if player['Location'] in location_enemies:
+        enemy = location_enemies[player['Location']]
+        fight_enemy(enemy, weapons[player['Weapon']])
+        save_game()
+    else:
+        print("No enemies here you can rest and explore")
+
+result = fight_enemy(enemy, weapons[player['Weapon']])
 
 # fight_enemy(enemy,weapon_damage)
