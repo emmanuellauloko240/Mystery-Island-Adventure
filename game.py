@@ -113,14 +113,14 @@ def fight_enemy(enemy, weapon_damage):
         return
     else:
         print("Villain is still alive")
-            
+     
     while enemy['Hp'] > 0 and player['Energy'] > 0:
         enemy['Hp'] = enemy['Hp'] - weapon_damage
         print(f"{enemy['Name']} you've only got {enemy['Hp']} Hp left!")
         if enemy['Hp'] <= 0:
             enemy['Defeated'] = True
             print(f"You defeated the {enemy['Name']}!")
-            break
+            return True
         if enemy['Hp'] > 0:
             if player['Energy'] >= enemy['Damage']:
                 print(f"{enemy['Name']} attacks the player!")
@@ -129,6 +129,9 @@ def fight_enemy(enemy, weapon_damage):
             else:            
                 print("Game over you have been defeated")
                 return False
+    if player['Energy'] <= 0:
+        print("Game over you have been defeated")
+        return False
 while player['Energy'] > 0:
     print("Where would you like to go?")
     print("1. Forest")
@@ -160,11 +163,11 @@ while player['Energy'] > 0:
 
     if player['Location'] in location_enemies:
         enemy = location_enemies[player['Location']]
-        fight_enemy(enemy, weapons[player['Weapon']])
+        result = fight_enemy(enemy, weapons[player['Weapon']])       
         save_game()
+
+        if result is False:
+            break
     else:
         print("No enemies here you can rest and explore")
 
-result = fight_enemy(enemy, weapons[player['Weapon']])
-
-# fight_enemy(enemy,weapon_damage)
