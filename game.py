@@ -122,14 +122,13 @@ def fight_enemy(enemy, weapon_damage):
             print(f"You defeated the {enemy['Name']}!")
             break
         if enemy['Hp'] > 0:
-            print(f"{enemy['Name']} attacks the player!")
-            player['Energy'] = player['Energy'] - enemy['Damage']
-            print(f"Careful...you only have {player['Energy']} Energy left!")
-
-        if player['Energy'] <= 0:
-            
-            print("Game over you have been defeated")
-            break
+            if player['Energy'] >= enemy['Damage']:
+                print(f"{enemy['Name']} attacks the player!")
+                player['Energy'] = player['Energy'] - enemy['Damage']
+                print(f"Careful...you only have {player['Energy']} Energy left!")
+            else:            
+                print("Game over you have been defeated")
+                break
 print("Where would you like to go?")
 print("1. Forest")
 print("2. Cave")
