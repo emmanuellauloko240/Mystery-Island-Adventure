@@ -28,6 +28,7 @@ temple_guardian = {
 
 player = {
     "Energy": 150,
+    "Max_Energy": 150,
     "Location": "Forest",
     'inventory': inventory,
     'Weapon': 'wooden sword'
@@ -71,6 +72,7 @@ if choice == '1':
 elif choice == '2':
     print("Starting a new game...")
     player['Energy'] = 150
+    player['Max_Energy'] = 150
     player['Location'] = 'Forest'
     player['Weapon'] = 'wooden sword'
     player['inventory'] = ['rope', 'water-bottle', 'map']
@@ -100,6 +102,49 @@ weapons = {
     "wooden sword": 10,
     "metal dagger": 20
 }
+
+def choose_weapon():
+    weapon_list = list(weapons.keys())
+
+    print("Choose your weapon:")
+
+    for index, weapon in enumerate(weapon_list, start=1):
+        print(f"{index}. {weapon}")
+
+    choice = input("Enter weapon number: ")
+
+    while choice not in ['1', '2', '3']:
+        print("Invalid choice!")
+        choice = input("Enter weapon number: ")
+
+    selected_weapon = weapon_list[int(choice) - 1]
+
+    player['Weapon'] = selected_weapon
+    print(f"You equipped {selected_weapon}!")
+
+def show_inventory():
+    print("\nYour inventory:")
+
+    for item in player['inventory']:
+        print(f"- {item}")
+def rest():
+    old_energy = player['Energy']
+
+    player['Energy'] = min(
+        player['Energy'] + 20,
+        player['Max_Energy']
+    )
+
+    recovered = player['Energy'] - old_energy
+
+    if recovered == 0:
+        print("Your Energy is already full!")
+    else:
+        print(f"You recovered {recovered} Energy!")
+
+    print(f"Current Energy: {player['Energy']}")
+
+    save_game()
 
 location_enemies = {
     "Forest": wild_beast,
@@ -137,10 +182,26 @@ while player['Energy'] > 0:
     print("1. Forest")
     print("2. Cave")
     print("3. Temple")
+    print("4. View inventory")
+    print("5. Rest")
+    print("6. Quit game")
 
     destination = input("Choose your destination: ")
 
-    if destination not in ['1', '2', '3']:
+    if destination == '6':
+        save_game()
+        print("Game saved. Thanks for playing!")
+        break
+
+    if destination == '4':
+        show_inventory()
+        continue
+
+    if destination == '5':
+        rest()
+        continue
+
+    if destination not in ['1', '2', '3','4','5','6']:
         print("Invalid destination!")
         continue
 
@@ -160,6 +221,7 @@ while player['Energy'] > 0:
         break
 
     print(player['Location'])
+    choose_weapon()
 
     if player['Location'] in location_enemies:
         enemy = location_enemies[player['Location']]
