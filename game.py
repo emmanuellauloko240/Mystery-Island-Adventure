@@ -22,12 +22,12 @@ temple_guardian = {
     "Name": "Temple Guardian",
     "Hp": 100,
     "Max_Hp": 100,
-    "Damage": 15,
+    "Damage": 5,
     "Defeated": False
 }
 
 player = {
-    "Energy": 50,
+    "Energy": 150,
     "Location": "Forest",
     'inventory': inventory,
     'Weapon': 'wooden sword'
@@ -70,7 +70,7 @@ if choice == '1':
 
 elif choice == '2':
     print("Starting a new game...")
-    player['Energy'] = 50
+    player['Energy'] = 150
     player['Location'] = 'Forest'
     player['Weapon'] = 'wooden sword'
     player['inventory'] = ['rope', 'water-bottle', 'map']
@@ -167,6 +167,9 @@ while player['Energy'] > 0:
         save_game()
 
         if result is False:
+            break
+        if all(enemy['Defeated'] for enemy in enemies.values()):
+            print("Congratulations! You found the treasure and won the game!")
             break
     else:
         print("No enemies here you can rest and explore")
