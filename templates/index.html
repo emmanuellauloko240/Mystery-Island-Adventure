@@ -1,11 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Mystery Island Adventure</title>
 </head>
+
 <body>
+
+    <!-- GAME HEADER -->
 
     <h1>🏝️ Mystery Island Adventure</h1>
 
@@ -13,25 +19,53 @@
 
     <h2>Ready for the adventure?</h2>
 
+
+    <!-- CREATE ROOM -->
+
     <h3>Create a Game Room</h3>
 
-    <form action="/create-room" method="POST">
-        <input type="text" name="player_name"
-               placeholder="Enter your name" required>
-        <button type="submit">Create Room</button>
+    <form action="{{ url_for('create_room') }}" method="POST">
+
+        <input
+            type="text"
+            name="player_name"
+            placeholder="Enter your name"
+            required
+        >
+
+        <button type="submit">
+            Create Room
+        </button>
+
     </form>
+
+
+    <!-- JOIN ROOM -->
 
     <h3>Join a Game Room</h3>
 
-    <form action="/join-room" method="POST">
-        <input type="text" name="player_name"
-               placeholder="Enter your name" required>
+    <form action="{{ url_for('join_room') }}" method="POST">
 
-        <input type="text" name="room_code"
-               placeholder="Enter room code" required>
+        <input
+            type="text"
+            name="player_name"
+            placeholder="Enter your name"
+            required
+        >
 
-        <button type="submit">Join Room</button>
+        <input
+            type="text"
+            name="room_code"
+            placeholder="Enter room code"
+            required
+        >
+
+        <button type="submit">
+            Join Room
+        </button>
+
     </form>
 
 </body>
+
 </html>

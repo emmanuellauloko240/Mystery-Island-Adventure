@@ -1,6 +1,7 @@
+
 import secrets
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask_socketio import (
     SocketIO,
     join_room as socketio_join_room,
@@ -8,9 +9,9 @@ from flask_socketio import (
 )
 
 
-# -------------------------
+# =========================
 # APP CONFIGURATION
-# -------------------------
+# =========================
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mystery-island-secret'
@@ -20,22 +21,27 @@ socketio = SocketIO(app)
 rooms = {}
 
 
-# -------------------------
+# =========================
 # HOME PAGE
-# -------------------------
+# =========================
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
-# -------------------------
+# =========================
 # CREATE GAME ROOM
-# -------------------------
+# =========================
 
 @app.route('/create-room', methods=['POST'])
 def create_room():
-    player_name = request.form.get('player_name')
+    player_name = request.form.get('player_name', '').strip()
+
+    if not player_name:
+        return "Please enter your name!"
+
+    session['player_name'] = player_name
 
     room_code = secrets.token_hex(3).upper()
 
@@ -70,20 +76,25 @@ def create_room():
     )
 
 
-# -------------------------
+# =========================
 # JOIN GAME ROOM
-# -------------------------
+# =========================
 
 @app.route('/join-room', methods=['POST'])
 def join_room():
-    player_name = request.form.get('player_name')
-    room_code = request.form.get('room_code')
+    player_name = request.form.get('player_name', '').strip()
+    room_code = request.form.get('room_code', '').strip().upper()
+
+    if not player_name:
+        return "Please enter your name!"
 
     if room_code not in rooms:
         return "Room does not exist!"
 
     if len(rooms[room_code]['players']) >= 2:
         return "Room is full!"
+
+    session['player_name'] = player_name
 
     rooms[room_code]['players'].append(player_name)
     rooms[room_code]['status'] = 'ready'
@@ -96,34 +107,40 @@ def join_room():
     )
 
 
-# -------------------------
+# =========================
 # GAME PAGE
-# -------------------------
+# =========================
 
 @app.route('/game/<room_code>')
 def game_page(room_code):
     if room_code not in rooms:
         return "Room does not exist!"
 
+    player_name = session.get('player_name')
+
+    if not player_name or player_name not in rooms[room_code]['players']:
+        return "You are not a player in this room!"
+
     return render_template(
         'game.html',
         room_code=room_code,
-        players=rooms[room_code]['players']
+        players=rooms[room_code]['players'],
+        player_name=player_name
     )
 
 
-# -------------------------
+# =========================
 # SOCKET.IO CONNECTION
-# -------------------------
+# =========================
 
 @socketio.on('connect')
 def handle_connect():
     print('A player connected!')
 
 
-# -------------------------
+# =========================
 # JOIN SOCKET.IO ROOM
-# -------------------------
+# =========================
 
 @socketio.on('join_game_room')
 def handle_join_game_room(data):
@@ -148,9 +165,9 @@ def handle_join_game_room(data):
     }, to=room_code)
 
 
-# -------------------------
+# =========================
 # SELECT ENEMY
-# -------------------------
+# =========================
 
 @socketio.on('select_enemy')
 def handle_select_enemy(data):
@@ -173,9 +190,9 @@ def handle_select_enemy(data):
     }, to=room_code)
 
 
-# -------------------------
+# =========================
 # ATTACK ENEMY
-# -------------------------
+# =========================
 
 @socketio.on('attack_enemy')
 def handle_attack_enemy(data):
@@ -202,9 +219,49 @@ def handle_attack_enemy(data):
     }, to=room_code)
 
 
-# -------------------------
+# =========================
+# FIND TREASURE
+# =========================
+
+@socketio.on('find_treasure')
+def handle_find_treasure(data):
+    room_code = data.get('room_code')
+    player_name = data.get('player_name')
+
+    if room_code not in rooms:
+        return
+
+    room = rooms[room_code]
+
+    if player_name not in room['players']:
+        return
+
+    if room['treasure_found']:
+        return
+
+    all_enemies_defeated = all(
+        enemy['hp'] <= 0
+        for enemy in room['enemies'].values()
+    )
+
+    if not all_enemies_defeated:
+        emit('treasure_result', {
+            'message': 'Defeat all enemies before finding the treasure!'
+        }, to=room_code)
+        return
+
+    room['treasure_found'] = True
+    room['winner'] = player_name
+
+    emit('treasure_result', {
+        'message': f'{player_name} found the treasure and won!',
+        'winner': player_name
+    }, to=room_code)
+
+
+# =========================
 # RUN APPLICATION
-# -------------------------
+# =========================
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

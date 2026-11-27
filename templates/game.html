@@ -1,16 +1,24 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Mystery Island Adventure - Game</title>
 </head>
+
 <body>
+
+    <!-- GAME HEADER -->
 
     <h1>🏝️ Mystery Island Adventure</h1>
 
     <h2>Room Code: {{ room_code }}</h2>
+
+
+    <!-- PLAYERS -->
 
     <h3>Players:</h3>
 
@@ -20,94 +28,254 @@
         {% endfor %}
     </ul>
 
+
+    <!-- DESTINATIONS -->
+
     <h2>Your adventure begins here!</h2>
 
     <h2>Choose Your Destination</h2>
 
-    <div>
-        <button onclick="exploreLocation('forest')">
-            🌳 Explore Forest
-        </button>
-        <p>A mysterious forest filled with hidden dangers.</p>
+    <button onclick="exploreLocation('forest')">
+        🌳 Explore Forest
+    </button>
 
-        <button onclick="exploreLocation('cave')">
-            🕳️ Explore Cave
-        </button>
-        <p>A mysterious cave filled with hidden dangers.</p>
+    <p>A mysterious forest filled with hidden dangers.</p>
 
-        <button onclick="exploreLocation('temple')">
-            🏛️ Explore Temple
-        </button>
-        <p>A mysterious temple filled with hidden dangers.</p>
-    </div>
+    <button onclick="exploreLocation('cave')">
+        🕳️ Explore Cave
+    </button>
+
+    <p>A mysterious cave filled with hidden dangers.</p>
+
+    <button onclick="exploreLocation('temple')">
+        🏛️ Explore Temple
+    </button>
+
+    <p>A mysterious temple filled with hidden dangers.</p>
+
+
+    <!-- LOCATION INFORMATION -->
 
     <p id="location-message"></p>
 
+
+    <!-- ENEMY INFORMATION -->
+
     <div id="enemy-info"></div>
 
-    <button id="attack-button" onclick="attackEnemy()" disabled>
+
+    <!-- ATTACK BUTTON -->
+
+    <button
+        id="attack-button"
+        onclick="attackEnemy()"
+        disabled
+    >
         ⚔️ Attack Enemy
     </button>
+
+
+    <br><br>
+
+
+    <!-- TREASURE -->
+
+    <button
+        id="treasure-button"
+        onclick="findTreasure()"
+    >
+        🏆 Find Treasure
+    </button>
+
+    <p id="treasure-message"></p>
+
+
+    <!-- SOCKET.IO -->
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
     <script>
+
+        // =========================
+        // GAME CONFIGURATION
+        // =========================
+
         const socket = io();
+
         const roomCode = {{ room_code|tojson }};
+        const playerName = {{ player_name|tojson }};
 
         let enemies = {};
+        let selectedLocation = null;
+        let gameFinished = false;
 
-        // Connect to the game room
+
+        // =========================
+        // CONNECT TO GAME ROOM
+        // =========================
+
         socket.on('connect', () => {
+
             console.log('Connected to the game server!');
+
             socket.emit('join_game_room', {
                 room_code: roomCode
             });
+
         });
 
-        // Receive room and enemy data
+
+        // =========================
+        // RECEIVE ROOM DATA
+        // =========================
+
         socket.on('room_update', (data) => {
+
             enemies = data.enemies;
+
             console.log('Enemy data received:', enemies);
+
         });
 
-        // Select a location
+
+        // =========================
+        // EXPLORE LOCATION
+        // =========================
+
         function exploreLocation(location) {
+
+            if (gameFinished) return;
+
             socket.emit('select_enemy', {
                 room_code: roomCode,
                 location: location
             });
+
         }
 
-        // Receive selected enemy
+
+        // =========================
+        // RECEIVE SELECTED ENEMY
+        // =========================
+
         socket.on('enemy_selected', (data) => {
-            document.getElementById("location-message").textContent =
-                "You are exploring the " + data.location + "!";
 
-            document.getElementById("enemy-info").textContent =
-                data.enemy.name + " | HP: " + data.enemy.hp;
+            selectedLocation = data.location;
 
-            document.getElementById("attack-button").disabled = false;
+            document.getElementById('location-message').textContent =
+                'You are exploring the ' + data.location + '!';
+
+            updateEnemyDisplay(data.enemy);
+
         });
 
-        // Attack the enemy
+
+        // =========================
+        // DISPLAY ENEMY INFORMATION
+        // =========================
+
+        function updateEnemyDisplay(enemy) {
+
+            const enemyInfo = document.getElementById('enemy-info');
+            const attackButton = document.getElementById('attack-button');
+
+            if (enemy.hp <= 0) {
+
+                enemyInfo.textContent =
+                    enemy.name + ' has been defeated!';
+
+                attackButton.disabled = true;
+
+            } else {
+
+                enemyInfo.textContent =
+                    enemy.name + ' | HP: ' + enemy.hp;
+
+                attackButton.disabled = gameFinished;
+
+            }
+
+        }
+
+
+        // =========================
+        // ATTACK ENEMY
+        // =========================
+
         function attackEnemy() {
+
+            if (gameFinished || !selectedLocation) return;
+
             socket.emit('attack_enemy', {
                 room_code: roomCode
             });
+
         }
-        // Receive updated enemy health
-socket.on('enemy_health_update', (data) => {
-    document.getElementById("enemy-info").textContent =
-        data.enemy.name + " | HP: " + data.enemy.hp;
 
-    if (data.enemy.hp <= 0) {
-        document.getElementById("enemy-info").textContent =
-            data.enemy.name + " has been defeated!";
 
-        document.getElementById("attack-button").disabled = true;
-    }
-});
+        // =========================
+        // RECEIVE UPDATED ENEMY HEALTH
+        // =========================
+
+        socket.on('enemy_health_update', (data) => {
+
+            if (data.location !== selectedLocation) return;
+
+            enemies[data.location] = data.enemy;
+
+            updateEnemyDisplay(data.enemy);
+
+        });
+
+
+        // =========================
+        // FIND TREASURE
+        // =========================
+
+        function findTreasure() {
+
+            if (gameFinished) return;
+
+            socket.emit('find_treasure', {
+                room_code: roomCode,
+                player_name: playerName
+            });
+
+        }
+
+
+        // =========================
+        // RECEIVE TREASURE RESULT
+        // =========================
+
+        socket.on('treasure_result', (data) => {
+
+            document.getElementById('treasure-message').textContent =
+                data.message;
+
+            if (data.winner) {
+
+                gameFinished = true;
+
+                document.getElementById('attack-button').disabled = true;
+
+                document.getElementById('treasure-button').disabled = true;
+
+            }
+
+        });
+
+
+        // =========================
+        // RECEIVE ROOM ERRORS
+        // =========================
+
+        socket.on('room_error', (data) => {
+
+            alert(data.message);
+
+        });
+
     </script>
 
 </body>

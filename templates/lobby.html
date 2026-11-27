@@ -1,55 +1,156 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Game Lobby - Mystery Island Adventure</title>
 </head>
+
 <body>
+
+    <!-- LOBBY HEADER -->
 
     <h1>🏝️ Game Lobby</h1>
 
     <h2>Room Code: {{ room_code }}</h2>
+
+
+    <!-- PLAYERS -->
+
     <h3>Players in this room:</h3>
 
     <ul id="players-list">
+
         {% for player in players %}
             <li>{{ player }}</li>
         {% endfor %}
+
     </ul>
 
-<p>Game Status: <span id="game-status">{{ status }}</span></p>
-{% if status == 'ready' %}
-    <a href="{{ url_for('game_page', room_code=room_code) }}">
-        <button>Start Adventure</button>
-    </a>
-{% endif %}
+
+    <!-- GAME STATUS -->
+
+    <p>
+        Game Status:
+        <span id="game-status">{{ status }}</span>
+    </p>
+
+
+    <!-- START GAME -->
+
+    <div id="start-game">
+
+        {% if status == 'ready' %}
+
+            <a href="{{ url_for('game_page', room_code=room_code) }}">
+                <button>Start Adventure</button>
+            </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- SOCKET.IO -->
+
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
-<script>
-    const socket = io();
-    const roomCode = {{ room_code|tojson }};
+    <script>
 
-    socket.on('connect', () => {
-        console.log('Connected to the game server!');
-        socket.emit('join_game_room', { room_code: roomCode });
-    });
-    
-    socket.on('room_update', (data) => {
-        const playersList = document.getElementById('players-list');
-        const gameStatus = document.getElementById('game-status');
+        // =========================
+        // LOBBY CONFIGURATION
+        // =========================
 
-        playersList.innerHTML = '';
+        const socket = io();
 
-        data.players.forEach((player) => {
-            const li = document.createElement('li');
-            li.textContent = player;
-            playersList.appendChild(li);
+        const roomCode = {{ room_code|tojson }};
+
+
+        // =========================
+        // CONNECT TO ROOM
+        // =========================
+
+        socket.on('connect', () => {
+
+            console.log('Connected to the game server!');
+
+            socket.emit('join_game_room', {
+                room_code: roomCode
+            });
+
         });
 
-        gameStatus.textContent = data.status;
-    });
 
-</script>
+        // =========================
+        // UPDATE LOBBY
+        // =========================
+
+        socket.on('room_update', (data) => {
+
+            const playersList =
+                document.getElementById('players-list');
+
+            const gameStatus =
+                document.getElementById('game-status');
+
+            const startGame =
+                document.getElementById('start-game');
+
+
+            // UPDATE PLAYERS
+
+            playersList.innerHTML = '';
+
+            data.players.forEach((player) => {
+
+                const li = document.createElement('li');
+
+                li.textContent = player;
+
+                playersList.appendChild(li);
+
+            });
+
+
+            // UPDATE STATUS
+
+            gameStatus.textContent = data.status;
+
+
+            // UPDATE START BUTTON
+
+            if (data.status === 'ready') {
+
+                startGame.innerHTML = `
+                    <a href="/game/${encodeURIComponent(roomCode)}">
+                        <button>Start Adventure</button>
+                    </a>
+                `;
+
+            } else {
+
+                startGame.innerHTML = '';
+
+            }
+
+        });
+
+
+        // =========================
+        // ROOM ERRORS
+        // =========================
+
+        socket.on('room_error', (data) => {
+
+            alert(data.message);
+
+        });
+
+    </script>
+
 </body>
+
 </html>
