@@ -19,6 +19,11 @@
     </ul>
 
 <p>Game Status: <span id="game-status">{{ status }}</span></p>
+{% if status == 'ready' %}
+    <a href="{{ url_for('game_page', room_code=room_code) }}">
+        <button>Start Adventure</button>
+    </a>
+{% endif %}
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
 <script>

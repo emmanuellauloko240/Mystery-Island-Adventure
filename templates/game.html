@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery Island Adventure - Game</title>
+</head>
+<body>
+
+    <h1>🏝️ Mystery Island Adventure</h1>
+
+    <h2>Room Code: {{ room_code }}</h2>
+
+    <h3>Players:</h3>
+
+    <ul>
+        {% for player in players %}
+            <li>{{ player }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Your adventure begins here!</h2>
+
+    <h2>Choose Your Destination</h2>
+
+    <div>
+        <button onclick="exploreLocation('forest')">
+            🌳 Explore Forest
+        </button>
+        <p>A mysterious forest filled with hidden dangers.</p>
+
+        <button onclick="exploreLocation('cave')">
+            🕳️ Explore Cave
+        </button>
+        <p>A mysterious cave filled with hidden dangers.</p>
+
+        <button onclick="exploreLocation('temple')">
+            🏛️ Explore Temple
+        </button>
+        <p>A mysterious temple filled with hidden dangers.</p>
+    </div>
+
+    <p id="location-message"></p>
+
+    <div id="enemy-info"></div>
+
+    <button id="attack-button" onclick="attackEnemy()" disabled>
+        ⚔️ Attack Enemy
+    </button>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <script>
+        const socket = io();
+        const roomCode = {{ room_code|tojson }};
+
+        let enemies = {};
+
+        // Connect to the game room
+        socket.on('connect', () => {
+            console.log('Connected to the game server!');
+            socket.emit('join_game_room', {
+                room_code: roomCode
+            });
+        });
+
+        // Receive room and enemy data
+        socket.on('room_update', (data) => {
+            enemies = data.enemies;
+            console.log('Enemy data received:', enemies);
+        });
+
+        // Select a location
+        function exploreLocation(location) {
+            socket.emit('select_enemy', {
+                room_code: roomCode,
+                location: location
+            });
+        }
+
+        // Receive selected enemy
+        socket.on('enemy_selected', (data) => {
+            document.getElementById("location-message").textContent =
+                "You are exploring the " + data.location + "!";
+
+            document.getElementById("enemy-info").textContent =
+                data.enemy.name + " | HP: " + data.enemy.hp;
+
+            document.getElementById("attack-button").disabled = false;
+        });
+
+        // Attack the enemy
+        function attackEnemy() {
+            socket.emit('attack_enemy', {
+                room_code: roomCode
+            });
+        }
+        // Receive updated enemy health
+socket.on('enemy_health_update', (data) => {
+    document.getElementById("enemy-info").textContent =
+        data.enemy.name + " | HP: " + data.enemy.hp;
+
+    if (data.enemy.hp <= 0) {
+        document.getElementById("enemy-info").textContent =
+            data.enemy.name + " has been defeated!";
+
+        document.getElementById("attack-button").disabled = true;
+    }
+});
+    </script>
+
+</body>
+</html>
